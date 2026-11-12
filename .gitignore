@@ -1,0 +1,21 @@
+# Секреты и локальные настройки
+.env
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+*.log
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+*.egg-info/
+
+# IDE
+.idea/
+.vscode/
+*.swp
+
+# Docker
+postgres_data/

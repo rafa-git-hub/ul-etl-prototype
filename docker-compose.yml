@@ -1,0 +1,39 @@
+services:
+  postgres:
+    image: postgres:17
+    container_name: ul-postgres
+    environment:
+      POSTGRES_USER: ul
+      POSTGRES_PASSWORD: ul_secret
+      POSTGRES_DB: deals_bigdata
+    ports:
+      - "5432:5432"
+    volumes:
+      - ./docker/postgres/init:/docker-entrypoint-initdb.d:ro
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ul -d deals_bigdata"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  bootstrap:
+    build:
+      context: .
+      dockerfile: docker/Dockerfile.bootstrap
+    container_name: ul-bootstrap
+    depends_on:
+      postgres:
+        condition: service_healthy
+    environment:
+      POSTGRES_HOST: postgres
+      POSTGRES_PORT: 5432
+      POSTGRES_USER: ul
+      POSTGRES_PASSWORD: ul_secret
+      POSTGRES_DB: deals_bigdata
+    volumes:
+      - ./sql:/app/sql:ro
+    restart: "no"
+
+volumes:
+  postgres_data:
